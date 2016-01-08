@@ -19,14 +19,16 @@ import (
 	"github.com/scoutred/scoutred-go/client"
 )
 
-//	create a new ScoutRED API client
-scoutred := client.API{}
-scoutred.Init(apiKey)
+func main(){
+	//	create a new ScoutRED API client
+	scoutred := client.API{}
+	scoutred.Init(apiKey)
 
-srp, err := scoutred.Parcels.GetBySrcId(*sgp.Apn)
-if err != nil {
-	log.Fatal(err)
+	srp, err := scoutred.Parcels.GetBySrcId(*sgp.Apn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("%+v", srp)	
 }
-
-log.Printf("%+v", srp)
 ```
