@@ -20,6 +20,8 @@ import (
 )
 
 func main(){
+	apiKey := "8da87f..." //	your API key
+
 	//	create a new ScoutRED API client
 	scoutred := client.API{}
 	scoutred.Init(apiKey)
