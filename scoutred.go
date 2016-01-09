@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	//	apiUrl = "http://192.168.99.100:8080/api"
-	apiUrl = "https://dev.scoutred.com/api"
+	apiUrl = "http://192.168.99.100:8080/api"
+	//	apiUrl = "https://dev.scoutred.com/api"
 )
 
 // Backend is an interface for making calls against a ScoutRED service.

@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/scoutred/publisher/sdk/parcel"
+	"github.com/scoutred/scoutred-go/parcel"
 )
 
 type API struct {
