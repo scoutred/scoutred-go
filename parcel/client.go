@@ -3,6 +3,7 @@ package parcel
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 
 	"github.com/scoutred/scoutred-go"
 )
@@ -14,8 +15,10 @@ type Client struct {
 
 //	fetch parcel by ScoutRED id
 func (this Client) GetById(id int64) (parcel *scoutred.Parcel, err error) {
+	//	format our url
+	url := fmt.Sprintf("/parcels/src-id/%v", id)
 	//	make our requeset
-	err = scoutred.Call("GET", "/parcels/src-id/"+id, this.Key, nil, &parcel)
+	err = scoutred.Call("GET", url, this.Key, nil, &parcel)
 
 	return
 }
