@@ -23,10 +23,10 @@ func main(){
 	apiKey := "8da87f..." //	your API key
 
 	//	create a new ScoutRED API client
-	scoutred := client.API{}
-	scoutred.Init(apiKey)
+	api := client.API{}
+	api.Init(apiKey)
 
-	srp, err := scoutred.Parcels.GetBySrcId(*sgp.Apn)
+	srp, err := api.Parcels.GetBySrcId(*sgp.Apn)
 	if err != nil {
 		log.Fatal(err)
 	}
