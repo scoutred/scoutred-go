@@ -62,6 +62,7 @@ func Call(method, path, key string, body io.Reader, v interface{}) (err error) {
 	if res.StatusCode != 200 {
 		var apiError Error
 		if err = json.Unmarshal(resBody, &apiError); err != nil {
+			//	TODO: this needs to be of type scout.Error
 			return err
 		}
 
