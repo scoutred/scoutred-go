@@ -3,7 +3,6 @@ package scoutred
 import (
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -52,17 +51,11 @@ func Call(method, path, key string, body io.Reader, v interface{}) (err error) {
 	}
 	defer res.Body.Close()
 
-	//	read our response body
-	resBody, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return
-	}
-
 	//	TODO: expand out response code handling
 	if res.StatusCode != 200 {
 		var apiError Error
-		if err = json.Unmarshal(resBody, &apiError); err != nil {
-			//	TODO: this needs to be of type scout.Error
+		if err = json.NewDecoder(res.Body).Decode(&apiError); err != nil {
+			//	TODO: this needs to be of type scoutred.Error
 			return err
 		}
 
@@ -73,7 +66,7 @@ func Call(method, path, key string, body io.Reader, v interface{}) (err error) {
 
 	//	parse our response JSON into the provided struct
 	if v != nil {
-		return json.Unmarshal(resBody, v)
+		return json.NewDecoder(res.Body).Decode(v)
 	}
 
 	return
