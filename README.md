@@ -1,5 +1,5 @@
-# Go ScoutRED
-The official Go client for the ScoutRED API
+# Go Scoutred
+The official Go client for the Scoutred API. This client can be used as a Go package or via the command line.
 
 ## Installation
 
@@ -20,13 +20,12 @@ import (
 )
 
 func main(){
-	apiKey := "8da87f..." //	your API key
+	apiKey := "8da87f..." // your API key
 
-	//	create a new ScoutRED API client
-	api := client.API{}
-	api.Init(apiKey)
+	// create a new Scoutred API client
+	c := client.New(apiKey)
 
-	srp, err := api.Parcels.GetBySrcId(*sgp.Apn)
+	srp, err := c.ParcelByID(22219)
 	if err != nil {
 		log.Fatal(err)
 	}
