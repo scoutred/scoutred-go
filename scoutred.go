@@ -8,21 +8,19 @@ import (
 )
 
 const (
-	//	apiUrl = "http://192.168.99.100:8080/api"
-	apiUrl = "https://dev.scoutred.com/api"
+	apiUrl = "https://scoutred.com/api"
 )
 
-// Backend is an interface for making calls against a ScoutRED service.
+// Caller is an interface for making calls against a Scoutred service.
 // This interface exists to enable mocking for during testing if needed.
-type Backend interface {
+type Caller interface {
 	Call(method, path, key string, body io.Reader, v interface{}) error
 }
 
 var httpClient = &http.Client{}
 
-// Call is the Backend.Call implementation for invoking ScoutRED APIs.
+// Call is the implementation for invoking Scoutred APIs.
 func Call(method, path, key string, body io.Reader, v interface{}) (err error) {
-
 	//	check to make sure our API endpoint starts with "/"
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
@@ -51,8 +49,14 @@ func Call(method, path, key string, body io.Reader, v interface{}) (err error) {
 	}
 	defer res.Body.Close()
 
-	//	TODO: expand out response code handling
-	if res.StatusCode != 200 {
+	// TODO (arolek): expand out response code handling
+	switch res.StatusCode {
+	case http.StatusOK:
+		//	parse our response JSON into the provided struct
+		if v != nil {
+			return json.NewDecoder(res.Body).Decode(v)
+		}
+	default: // currently only error handling
 		var apiError Error
 		if err = json.NewDecoder(res.Body).Decode(&apiError); err != nil {
 			//	TODO: this needs to be of type scoutred.Error
@@ -62,11 +66,6 @@ func Call(method, path, key string, body io.Reader, v interface{}) (err error) {
 		apiError.StatusCode = res.StatusCode
 
 		return &apiError
-	}
-
-	//	parse our response JSON into the provided struct
-	if v != nil {
-		return json.NewDecoder(res.Body).Decode(v)
 	}
 
 	return

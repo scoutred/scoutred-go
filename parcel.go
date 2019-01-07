@@ -2,41 +2,57 @@ package scoutred
 
 import (
 	"time"
+
+	"github.com/scoutred/app/geojson"
 )
 
 type Parcel struct {
-	//	internal system id
-	//	we use an int64 as there are an estimated 3 billion parcels in the US alone
-	Id int64 `json:"id"`
-	//	sha1 hash of the id used to identify the parcel at the data source
-	SourceId string `json:"srcId"`
+	ID             *int64  `json:"id"`
+	StateFIPSCode  *string `json:"stateFIPS"`
+	CountyFIPSCode *string `json:"countyFIPS"`
 	//	assessor parcel number
-	APN  *string `json:"apn"`
-	Data struct {
-		Owner struct {
-			Name1    *string `json:"name1"`
-			Name2    *string `json:"name2"`
-			Name3    *string `json:"name3"`
-			Address1 *string `json:"address1"`
-			Address2 *string `json:"address2"`
-			Address3 *string `json:"address3"`
-			Address4 *string `json:"address4"`
-			Zip      *string `json:"zip"`
-		} `json:"owner"`
-		Address          Address `json:"address"`
-		LegalDescription *string `json:"legalDescription"`
-		Subdivision      struct {
-			Map  *string `json:"map"`
-			Name *string `json:"name"`
-		} `json:"subdivision"`
-		//	assessor data
-		Assessor struct {
-			Land         *float64 `json:"land"`
-			Improvements *float64 `json:"improvements"`
-		} `json:"assessor"`
-	} `json:"data"`
-	Geom     MultiPolygon `json:"geom"`
-	GeomArea float64      `json:"geomArea"`
-	Updated  time.Time    `json:"update"`
-	Created  time.Time    `json:"created"`
+	APN     *string  `json:"apn"`
+	Address *Address `json:"address"`
+	Owner   struct {
+		Name1    *string `json:"name1"`
+		Name2    *string `json:"name2"`
+		Name3    *string `json:"name3"`
+		Address1 *string `json:"address1"`
+		Address2 *string `json:"address2"`
+		Address3 *string `json:"address3"`
+		Address4 *string `json:"address4"`
+		Postal   *string `json:"postal"`
+	} `json:"owner"`
+	LegalDescription *string `json:"legalDescription"`
+	Subdivision      struct {
+		Map  *string `json:"name"`
+		Name *string `json:"map"`
+	} `json:"subdivision"`
+	Assessor struct {
+		Land         *int32 `json:"land"`
+		Improvements *int32 `json:"improvements"`
+	} `json:"assessor"`
+	Structure struct {
+		ConstructionYear *int32 `json:"effectiveYearBuilt"`
+		SFLiving         *int32 `json:"livingSF"`
+		SFUsable         *int32 `json:"usableSF"`
+		Units            *int32 `json:"units"`
+		Bedrooms         *int32 `json:"bedrooms"`
+		Bathrooms        *int32 `json:"bathrooms"`
+	} `json:"structure"`
+	//	the area of the geometry representation of the parcel
+	//	this can be used for lot size, but is not the recorded lot size
+	//	but rather the area of the geometry in the projection it was created in
+	GeomArea *float64 `json:"geomArea"`
+	//	State         State         `json:"state"`
+	//	County        County        `json:"county"`
+	CommunityPlan *CommunityPlan  `json:"communityPlan"`
+	Zoning        []Zoning        `json:"zoning"`
+	Overlays      []Overlay       `json:"overlays"`
+	Permits       []Permit        `json:"permits"`
+	Bounds        geojson.Polygon `json:"bounds"`
+	Geohash       *string         `json:"geohash"`
+	Created       time.Time       `json:"created"`
+	Updated       time.Time       `json:"updated"`
+	Unlocked      bool            `json:"unlocked"`
 }
