@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/scoutred/scoutred-go/client"
 )
 
 var (
@@ -18,6 +20,8 @@ var parcelsCmd = &cobra.Command{
 	Short: "Fetch parcel records",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		c := client.New(cmd.Flag("key").Value.String())
+
 		p, err := c.ParcelByID(parcelID)
 		if err != nil {
 			log.Fatal(err)
@@ -28,9 +32,9 @@ var parcelsCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(parcelsCmd)
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
 	parcelsCmd.Flags().Int64Var(&parcelID, "id", 0, "The ID of the parcel record to fetch")
+	parcelsCmd.Flags().StringP("key", "k", "", "your Scoutred API key (required)")
+	parcelsCmd.MarkFlagRequired("key")
+
+	rootCmd.AddCommand(parcelsCmd)
 }

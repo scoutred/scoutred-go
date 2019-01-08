@@ -2,10 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
-	"github.com/scoutred/scoutred-go/client"
 	"github.com/spf13/cobra"
 )
 
@@ -23,26 +21,4 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-var (
-	// key is the API key for the user (required)
-	key string
-	// c is the instantiated client which has the user's API key
-	c *client.Client
-)
-
-func init() {
-	cobra.OnInitialize(setAPIKey)
-
-	rootCmd.PersistentFlags().StringVarP(&key, "key", "k", "", "your Scoutred API key (required)")
-	rootCmd.MarkFlagRequired("key")
-}
-
-func setAPIKey() {
-	if key == "" {
-		log.Fatal("key required. include the --key flag (i.e. scoutred --key [your API key] [command]")
-	}
-
-	c = client.New(key)
 }
