@@ -19,7 +19,6 @@ func New(key string) *Client {
 type Client struct {
 	// Key is the API key for the instance of the client
 	Key string
-
 	// embed an http.Client so we have access to all it's methods
 	*http.Client
 }

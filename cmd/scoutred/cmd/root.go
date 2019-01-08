@@ -22,18 +22,3 @@ func Execute() {
 		os.Exit(1)
 	}
 }
-
-/*
-func init() {
-	rootCmd.PersistentFlags().StringVarP(&key, "key", "k", "", "your Scoutred API key (required)")
-	rootCmd.MarkFlagRequired("key")
-}
-
-func setAPIKey() {
-	if key == "" {
-		log.Fatal("key required. include the --key flag (i.e. scoutred --key [your API key] [command]")
-	}
-
-	c = client.New(key)
-}
-*/
