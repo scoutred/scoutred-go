@@ -7,7 +7,7 @@ import (
 )
 
 // ZoningByID will fetch a pracel resource by Scoutred ID
-func (c Client) ZoningByID(id int64) (*scoutred.Zoning, error) {
+func (c *Client) ZoningByID(id int64) (*scoutred.Zoning, error) {
 	var (
 		err  error
 		zone *scoutred.Zoning
@@ -17,7 +17,7 @@ func (c Client) ZoningByID(id int64) (*scoutred.Zoning, error) {
 	url := fmt.Sprintf("/zoning/%d", id)
 
 	//	make our requeset
-	err = scoutred.Call("GET", url, c.Key, nil, &zone)
+	err = c.Call("GET", url, nil, &zone)
 	if err != nil {
 		return nil, err
 	}

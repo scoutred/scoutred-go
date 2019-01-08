@@ -7,7 +7,7 @@ import (
 )
 
 // ParcelByID will fetch a pracel resource by Scoutred ID
-func (c Client) ParcelByID(id int64) (*scoutred.Parcel, error) {
+func (c *Client) ParcelByID(id int64) (*scoutred.Parcel, error) {
 	var (
 		err    error
 		parcel *scoutred.Parcel
@@ -17,7 +17,7 @@ func (c Client) ParcelByID(id int64) (*scoutred.Parcel, error) {
 	url := fmt.Sprintf("/parcels/%d", id)
 
 	//	make our requeset
-	err = scoutred.Call("GET", url, c.Key, nil, &parcel)
+	err = c.Call("GET", url, nil, &parcel)
 	if err != nil {
 		return nil, err
 	}

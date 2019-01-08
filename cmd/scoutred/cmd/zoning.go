@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/scoutred/scoutred-go/client"
 )
 
 var (
@@ -18,6 +20,8 @@ var zoningCmd = &cobra.Command{
 	Short: "Fetch zoning records",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		c := client.New(cmd.Flag("key").Value.String())
+
 		z, err := c.ZoningByID(zoningID)
 		if err != nil {
 			log.Fatal(err)
@@ -31,4 +35,6 @@ func init() {
 	rootCmd.AddCommand(zoningCmd)
 
 	zoningCmd.Flags().Int64Var(&zoningID, "id", 0, "The ID of the zoning record to fetch")
+	zoningCmd.Flags().StringP("key", "k", "", "your Scoutred API key (required)")
+	zoningCmd.MarkFlagRequired("key")
 }
