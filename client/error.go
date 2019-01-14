@@ -5,12 +5,13 @@ import (
 )
 
 type Error struct {
-	Msg        string `json:"error"`
-	StatusCode int    `json:"statusCode"`
+	Msg string `json:"error"`
+	// HTTP Status Code associated with the error
+	StatusCode int `json:"statusCode"`
 }
 
 //	serialize the error for printing as a string
-func (this *Error) Error() string {
-	ret, _ := json.Marshal(this)
+func (e Error) Error() string {
+	ret, _ := json.Marshal(e)
 	return string(ret)
 }
