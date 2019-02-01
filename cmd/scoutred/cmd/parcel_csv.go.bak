@@ -1,0 +1,156 @@
+package cmd
+
+import (
+	"encoding/csv"
+	"io"
+	"log"
+	"os"
+	"strconv"
+
+	"github.com/spf13/cobra"
+
+	"github.com/scoutred/scoutred-go/client"
+)
+
+var (
+	lonIndex, latIndex uint64
+	csvHeader          bool
+	csvAppend          bool
+)
+
+// csvCmd represents the csv command
+var parcelsCsvCmd = &cobra.Command{
+	Use:   "csv",
+	Short: "output parcel data to CSV format",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		var err error
+
+		c := client.New(cmd.Flag("key").Value.String())
+
+		// file to read from
+		in, err := os.Open(cmd.Flag("input").Value.String())
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var out io.Writer
+		if cmd.Flag("output").Value.String() != "" {
+			// file to write to
+			out, err = os.Create(cmd.Flag("output").Value.String())
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			out = os.Stdout
+		}
+
+		// CSV reader
+		r := csv.NewReader(in)
+
+		// CSV writer
+		w := csv.NewWriter(out)
+
+		// iterate the records
+		first := true
+		for {
+			record, err := r.Read()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				log.Fatal(err)
+			}
+			// skip processing the header
+			if csvHeader && first {
+				first = false
+
+				// TODO(arolek): decorate the first record with additional headers if
+				// we're in append mode
+
+				if err := w.Write(record); err != nil {
+					log.Fatalln("error writing record to csv:", err)
+				}
+
+				// Write any buffered data to the underlying writer
+				w.Flush()
+				if err := w.Error(); err != nil {
+					log.Fatal(err)
+				}
+				continue
+			}
+
+			switch {
+			case lonIndex != 0 && latIndex != 0:
+				// error checking
+				if len(record) < int(lonIndex) {
+					log.Fatal("invlaid index provided for --lat")
+				}
+				if len(record) < int(latIndex) {
+					log.Fatal("invlaid index provided for --lat")
+				}
+
+				lon, err := strconv.ParseFloat(record[lonIndex], 64)
+				if err != nil {
+					log.Fatalf("invalid float value for --lon: %v", err)
+				}
+
+				lat, err := strconv.ParseFloat(record[latIndex], 64)
+				if err != nil {
+					log.Fatalf("invalid float value for --lat: %v", err)
+				}
+
+				// log.Printf("lat %v lon %v", record[latIndex], record[lonIndex])
+
+				// fetch parcels at lon / lat point
+				parcels, err := c.ParcelsByLonLat(lon, lat)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				// initial quick and dirty logic to fetch the zoning designation.
+				// this will need to be moved to the zoning sub command
+				for i := range parcels {
+					for j := range parcels[i].Zoning {
+						if parcels[i].Zoning[j].Designation != nil {
+							record = append(record, *parcels[i].Zoning[j].Designation)
+
+							// break after the first record. this is quick and dirty
+							// TODO(arolek): fix this nonsense
+							break
+						}
+					}
+				}
+
+				if err := w.Write(record); err != nil {
+					log.Fatalln("error writing record to csv:", err)
+				}
+
+				// arite any buffered data to the underlying writer
+				w.Flush()
+				if err := w.Error(); err != nil {
+					log.Fatal(err)
+				}
+			default:
+				log.Fatal("missing CSV indexes to work with")
+			}
+		}
+	},
+}
+
+func init() {
+	parcelsCmd.AddCommand(parcelsCsvCmd)
+
+	// flags
+	parcelsCsvCmd.Flags().StringP("input", "i", "", "CSV file to use as input")
+	// TODO(arolek): remove this requirement and support streaming from stdin
+	parcelsCsvCmd.MarkFlagRequired("input")
+	parcelsCsvCmd.Flags().StringP("output", "o", "", "CSV file name to write to")
+
+	parcelsCsvCmd.Flags().Uint64Var(&lonIndex, "lon", 0, "the column index of the CSV for the longitude value")
+	parcelsCsvCmd.Flags().Uint64Var(&latIndex, "lat", 0, "the column index of the CSV for the latitude value")
+
+	parcelsCsvCmd.Flags().BoolVar(&csvHeader, "header", false, "if the CSV has a header set this flag to true")
+	parcelsCsvCmd.Flags().BoolVar(&csvAppend, "append", false, "append Scoutred data to the incoming CSV file")
+
+}

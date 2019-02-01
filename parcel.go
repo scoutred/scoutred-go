@@ -33,12 +33,12 @@ type Parcel struct {
 		Improvements *int32 `json:"improvements"`
 	} `json:"assessor"`
 	Structure struct {
-		ConstructionYear *int32 `json:"effectiveYearBuilt"`
-		SFLiving         *int32 `json:"livingSF"`
-		SFUsable         *int32 `json:"usableSF"`
-		Units            *int32 `json:"units"`
-		Bedrooms         *int32 `json:"bedrooms"`
-		Bathrooms        *int32 `json:"bathrooms"`
+		ConstructionYear *int32   `json:"effectiveYearBuilt"`
+		SFLiving         *int32   `json:"livingSF"`
+		SFUsable         *int32   `json:"usableSF"`
+		Units            *int32   `json:"units"`
+		Bedrooms         *int32   `json:"bedrooms"`
+		Bathrooms        *float64 `json:"bathrooms"`
 	} `json:"structure"`
 	//	the area of the geometry representation of the parcel
 	//	this can be used for lot size, but is not the recorded lot size

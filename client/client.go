@@ -73,14 +73,13 @@ func (c *Client) Call(method, path string, body io.Reader, v interface{}) (err e
 	default: // currently only error handling
 		var apiError Error
 		if err = json.NewDecoder(res.Body).Decode(&apiError); err != nil {
-			//	TODO: this needs to be of type scoutred.Error
 			return err
 		}
 
 		apiError.StatusCode = res.StatusCode
 
-		return &apiError
+		return apiError
 	}
 
-	return
+	return nil
 }
