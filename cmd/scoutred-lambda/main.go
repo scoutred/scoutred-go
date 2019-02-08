@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
 	"path"
 	"strings"
@@ -88,7 +89,6 @@ func HandleRequest(ctx context.Context, s3Event events.S3Event) {
 
 // fetch the file from s3 and slurp it into memory
 func fetchS3Data(sess *session.Session, rec events.S3Entity) (*os.File, error) {
-
 	// Create a downloader with the session and default options
 	downloader := s3manager.NewDownloader(sess)
 
@@ -97,10 +97,15 @@ func fetchS3Data(sess *session.Session, rec events.S3Entity) (*os.File, error) {
 		return nil, err
 	}
 
+	escapedKey, err := url.QueryUnescape(rec.Object.Key)
+	if err != nil {
+		return nil, err
+	}
+
 	// Write the contents of S3 Object to the file
 	_, err = downloader.Download(tmpFile, &s3.GetObjectInput{
 		Bucket: aws.String(rec.Bucket.Name),
-		Key:    aws.String(rec.Object.Key),
+		Key:    aws.String(escapedKey),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to download file, %v", err)
@@ -123,9 +128,14 @@ func moveToDest(sess *session.Session, f *os.File, bucket, key string) error {
 
 	uploader := s3manager.NewUploader(sess)
 
+	escapedKey, err := url.QueryUnescape(key)
+	if err != nil {
+		return err
+	}
+
 	result, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucket),
-		Key:    aws.String(key),
+		Key:    aws.String(escapedKey),
 		Body:   f,
 	})
 	if err != nil {
