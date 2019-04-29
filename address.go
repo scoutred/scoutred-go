@@ -3,7 +3,7 @@ package scoutred
 import (
 	"time"
 
-	"github.com/scoutred/app/geojson"
+	"github.com/scoutred/scoutred-go/geojson"
 )
 
 type Address struct {
