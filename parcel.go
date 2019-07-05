@@ -25,8 +25,8 @@ type Parcel struct {
 	} `json:"owner"`
 	LegalDescription *string `json:"legalDescription"`
 	Subdivision      struct {
-		Map  *string `json:"name"`
-		Name *string `json:"map"`
+		Name *string `json:"name"`
+		Map  *string `json:"map"`
 	} `json:"subdivision"`
 	Assessor struct {
 		Land         *int32 `json:"land"`
@@ -55,4 +55,5 @@ type Parcel struct {
 	Created       time.Time       `json:"created"`
 	Updated       time.Time       `json:"updated"`
 	Unlocked      bool            `json:"unlocked"`
+	Collections   []Collection    `json:"collections"`
 }
