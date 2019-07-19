@@ -33,8 +33,8 @@ var authCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(authCmd)
 
-	authCmd.Flags().StringP("email", "e", "", "Email used to register on Scoutred")
+	authCmd.Flags().StringP("email", "e", "", "email used to register on Scoutred")
 	authCmd.MarkFlagRequired("email")
-	authCmd.Flags().StringP("password", "p", "", "Password associated with Email on Scoutred")
+	authCmd.Flags().StringP("password", "p", "", "password associated with email on Scoutred")
 	authCmd.MarkFlagRequired("password")
 }
