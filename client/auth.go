@@ -11,7 +11,7 @@ import (
 // Auth allows the user to login with their credentials
 // and have the system return back an API token
 func (c *Client) Auth(email, password string) (string, error) {
-	path := apiUrl + "/login"
+	path := c.ApiUrl + "/login"
 
 	// fill in the struct details
 	auth := scoutred.Auth{
