@@ -11,6 +11,7 @@ import (
 func New(key string) *Client {
 	return &Client{
 		key,
+		DefaultApiUrl,
 		&http.Client{},
 	}
 }
@@ -19,12 +20,15 @@ func New(key string) *Client {
 type Client struct {
 	// Key is the API key for the instance of the client
 	Key string
+	// ApiUrl is the url of the api server make requests to. This is
+	// useful for testing against local or dev servers
+	ApiUrl string
 	// embed an http.Client so we have access to all it's methods
 	*http.Client
 }
 
 const (
-	apiUrl = "https://scoutred.com/api"
+	DefaultApiUrl = "https://scoutred.com/api"
 )
 
 // Caller is an interface for making calls against a Scoutred service.
@@ -41,7 +45,7 @@ func (c *Client) Call(method, path string, body io.Reader, v interface{}) (err e
 	}
 
 	//	build the full endpoint
-	path = apiUrl + path
+	path = c.ApiUrl + path
 
 	req, err := http.NewRequest(method, path, body)
 	if err != nil {
