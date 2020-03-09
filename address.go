@@ -9,6 +9,9 @@ import (
 type Address struct {
 	ID           *int64         `json:"id"`
 	ParcelID     *int64         `json:"parcelId"`
+	APN          *string        `json:"apn"`
+	APNFmt       *string        `json:"apnFmt"`
+	Full         *string        `json:"full"`
 	Street       Street         `json:"street"`
 	Unit         *string        `json:"unit"`
 	Postal       *string        `json:"postal"`
