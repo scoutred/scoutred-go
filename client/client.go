@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -38,7 +39,7 @@ type Caller interface {
 }
 
 // Call is the implementation for invoking Scoutred APIs.
-func (c *Client) Call(method, path string, body io.Reader, v interface{}) (err error) {
+func (c *Client) Call(method, path string, body io.Reader, v interface{}) (error) {
 	//	check to make sure our API endpoint starts with "/"
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
@@ -49,7 +50,7 @@ func (c *Client) Call(method, path string, body io.Reader, v interface{}) (err e
 
 	req, err := http.NewRequest(method, path, body)
 	if err != nil {
-		return
+		return err
 	}
 
 	//	auth header required for request
@@ -63,7 +64,7 @@ func (c *Client) Call(method, path string, body io.Reader, v interface{}) (err e
 	//	make our request to the API
 	res, err := c.Do(req)
 	if err != nil {
-		return
+		return err
 	}
 	defer res.Body.Close()
 
@@ -74,10 +75,17 @@ func (c *Client) Call(method, path string, body io.Reader, v interface{}) (err e
 		if v != nil {
 			return json.NewDecoder(res.Body).Decode(v)
 		}
+
 	default: // currently only error handling
 		var apiError Error
-		if err = json.NewDecoder(res.Body).Decode(&apiError); err != nil {
+
+		byt, err := ioutil.ReadAll(res.Body)
+		if err != nil {
 			return err
+		}
+
+		if err = json.Unmarshal(byt, &apiError); err != nil {
+			apiError.Msg = string(byt)
 		}
 
 		apiError.StatusCode = res.StatusCode
