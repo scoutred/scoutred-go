@@ -2,7 +2,10 @@ package client
 
 import (
 	"encoding/json"
+	"errors"
 )
+
+var ErrNotFound = errors.New("resource not found")
 
 type Error struct {
 	Msg string `json:"error"`
