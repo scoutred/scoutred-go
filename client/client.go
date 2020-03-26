@@ -38,14 +38,15 @@ type Caller interface {
 	Call(method, path string, body io.Reader, v interface{}) error
 }
 
-// Call is the implementation for invoking Scoutred APIs.
-func (c *Client) Call(method, path string, body io.Reader, v interface{}) (error) {
-	//	check to make sure our API endpoint starts with "/"
+// Call is the implementation for invoking Scoutred APIs. On success
+// the response is marshalled into the the provided interface{}
+func (c *Client) Call(method, path string, body io.Reader, v interface{}) error {
+	// check to make sure our API endpoint starts with "/"
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
 
-	//	build the full endpoint
+	// build the full endpoint
 	path = c.ApiUrl + path
 
 	req, err := http.NewRequest(method, path, body)
@@ -53,15 +54,15 @@ func (c *Client) Call(method, path string, body io.Reader, v interface{}) (error
 		return err
 	}
 
-	//	auth header required for request
+	// auth header required for request
 	req.Header.Add("Authorization", fmt.Sprintf("BEARER %v", c.Key))
 
-	//	check for request payload
+	// check for request payload
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	//	make our request to the API
+	// make our request to the API
 	res, err := c.Do(req)
 	if err != nil {
 		return err
@@ -71,12 +72,15 @@ func (c *Client) Call(method, path string, body io.Reader, v interface{}) (error
 	// TODO (arolek): expand out response code handling
 	switch res.StatusCode {
 	case http.StatusOK:
-		//	parse our response JSON into the provided struct
+		// parse our response JSON into the provided struct
 		if v != nil {
 			return json.NewDecoder(res.Body).Decode(v)
 		}
 
-	default: // currently only error handling
+	case http.StatusNotFound:
+		return ErrNotFound
+
+	default:
 		var apiError Error
 
 		byt, err := ioutil.ReadAll(res.Body)

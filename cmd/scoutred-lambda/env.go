@@ -33,7 +33,7 @@ func (env *Env) Read() error {
 	}
 	env.CSVLatIdx, err = strconv.ParseUint(latIdx, 10, 64)
 	if err != nil {
-		return fmt.Errorf("invalid value for CSV_LAT_IDX: %d : %v", latIdx, err)
+		return fmt.Errorf("invalid value for CSV_LAT_IDX: %s : %v", latIdx, err)
 	}
 
 	lonIdx := os.Getenv("CSV_LON_IDX")
@@ -42,7 +42,7 @@ func (env *Env) Read() error {
 	}
 	env.CSVLonIdx, err = strconv.ParseUint(lonIdx, 10, 64)
 	if err != nil {
-		return fmt.Errorf("invalid value for CSV_LON_IDX: %d : %v", lonIdx, err)
+		return fmt.Errorf("invalid value for CSV_LON_IDX: %s : %v", lonIdx, err)
 	}
 
 	env.DestS3Bucket = os.Getenv("DESTINATION_S3_BUCKET")
