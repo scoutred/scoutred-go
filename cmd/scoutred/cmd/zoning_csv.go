@@ -18,11 +18,6 @@ var (
 	csvAppend bool
 )
 
-// zoningHeader are the additional zoning headers that will be added
-var zoningHeader = []string{
-	"designation",
-}
-
 // csvCmd represents the csv command
 var zoningCsvCmd = &cobra.Command{
 	Use:   "csv",
