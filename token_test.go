@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/scoutred/scoutred-go"
 )
 
@@ -50,11 +50,11 @@ func TestTokenHasExpired(t *testing.T) {
 	// Auth handler will make sure that the route is never allowed, so
 	// no need to test for anonymous user.
 	tests := map[string]tcase{
-		"exired": {
+		"expired": {
 			token:      genTokenExpires(-1),
 			hasExpired: true,
 		},
-		"not exired": {
+		"not expired": {
 			token:      genTokenExpires(1),
 			hasExpired: false,
 		},
