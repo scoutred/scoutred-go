@@ -3,7 +3,7 @@ package scoutred
 import (
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v4"
 )
 
 // TokenHasExpred will check if a token is expired. This function does not
